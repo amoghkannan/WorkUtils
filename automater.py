@@ -14,6 +14,8 @@ run(["python3","Test.py","ausm", "muscl", "sst"])
 os.chdir(currDir)
 os.chdir("basefiles")
 
+
+#Get variables over which parameter sweep to be done
 keysRepeated=[]
 valsRepeated=[]
 
@@ -42,6 +44,18 @@ for fvschemeKey in fvschemedict.keys():
                 valsRepeated.append(fvschemedict[fvschemeKey]) 
         counter=counter+1
 
+#Desired simulation figures of merit
+resFile=open("system/res_control.md","w")
+resFile.write("{\n")
+for outcome in res:
+        if(resAllowed.count(outcome)>0):
+                resFile.write(outcome+"\n")
+        else:
+               res.remove(outcome) 
+resFile.write("}")
+resFile.close()
+
+#Generate case files
 os.chdir("..")
 run(["rm","-rf","run_.part"])
 
@@ -49,4 +63,31 @@ generateCases(keysRepeated,valsRepeated,"")
 
 os.chdir("..")
 run(["rm","-rf","run_.part"])
+run(["rm","results.csv"])
 
+#Now run cases
+fileList=os.listdir(".")
+
+for fileName in fileList:
+        if(fileName[0:3]=="run"):
+                print("Running: ",fileName)
+                os.chdir(fileName)
+                run(["bash","run.sh"])
+                os.chdir("..")
+
+#Collect results
+outfile=open("results.csv","w")
+outfile.write("Case"+",")
+for key in keysRepeated:
+        outfile.write(key+",")
+
+for i  in range(0,len(res)):
+        outfile.write(res[i])
+        if(i!=len(res)-1):
+                outfile.write(",")
+        else:
+                outfile.write("\n")
+
+outfile.close()
+      
+generateReport(keysRepeated,valsRepeated,"","",res)

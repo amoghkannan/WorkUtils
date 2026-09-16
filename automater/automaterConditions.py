@@ -4,6 +4,7 @@ from subprocess import run
 controldict={}
 flowdict={}
 fvschemedict={}
+res=[] #Values to get out, as final report compilation
 
 controldict["CFL"]=["1.0"]
 controldict["Adaptive CFL flag"]=["0"]
@@ -48,4 +49,4 @@ fvschemedict["Time Integration Method"]=["RK4"]
 fvschemedict["Higher Order Boundary Conditions"]=["0"]
 fvschemedict["Effective Area"]=["0","1","2"]
 
-
+res=["Mass_abs","Viscous_abs"]

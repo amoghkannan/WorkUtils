@@ -45,3 +45,6 @@ fvschemedictAllowed["Time Integration Method"]=["none","RK4","RK2","TVDRK3","TVD
 fvschemedictAllowed["Higher Order Boundary Conditions"]=["ANY"]
 fvschemedictAllowed["Effective Area"]=["0","1","2"]
 
+resAllowed=["Mass_abs","Resnorm_abs","Viscous_abs","Turbulent_abs","Continuity_abs",
+"X_mom_abs","Y_mom_abs","Z_mom_abs","Energy_abs","Mass_rel","Resnorm_rel","Viscous_rel",
+"Turbulent_rel","Continuity_rel","X-mom_rel","Y-mom_rel","Z-mom_rel","Energy_rel"]
