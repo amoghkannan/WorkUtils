@@ -3,8 +3,11 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-x=np.linspace(-1.0,1.0,num=20)
-y=np.linspace(-1.0,1.0,num=20)
+nx=20
+ny=20
+
+x=np.linspace(-1.0,1.0,num=nx)
+y=np.linspace(-1.0,1.0,num=ny)
 
 fig=plt.figure()
 ax=fig.add_subplot(111)
@@ -60,5 +63,17 @@ for i in range(0,nIB-1):
         outfile.write("%25.15f " % currCoord2[1])
         outfile.write("%25.15f " % normal[0])
         outfile.write("%25.15f\n" % normal[1])
+
+outfile.close()
+
+outfile=open("files/mesh/gridfiles/grid_00.txt","w")
+outfile.write(str(nx)+" "+str(ny)+" "+str(2)+"\n")
+
+for k in range(0,2):
+        for j in range(0,ny):
+                for i in range(0,nx):
+                        outfile.write("%25.15f " % x[i])
+                        outfile.write("%25.15f " % y[j])
+                        outfile.write("%25.15f\n" % k)
 
 outfile.close()
