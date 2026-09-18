@@ -2,9 +2,12 @@
 
 import numpy as np
 from matplotlib import pyplot as plt
+from shapely.geometry import Point, Polygon, LineString
 
 nx=20
 ny=20
+
+cell_type=np.zeros((nx-1,ny-1),dtype=np.int8)
 
 x=np.linspace(-1.0,1.0,num=nx)
 y=np.linspace(-1.0,1.0,num=ny)
@@ -45,14 +48,16 @@ def onclick(event):
 cid=fig.canvas.mpl_connect("button_press_event",onclick)
 plt.show()
 
+polygon=Polygon(coords)
+
 coords.append(coords[0])
 
-nIB=len(coords)
+nIB=len(coords)-1
 outfile=open("files/mesh/ib.dat","w")
 
 outfile.write(str(nIB)+"\n")
 
-for i in range(0,nIB-1):
+for i in range(0,nIB):
         currCoord1=coords[i]
         currCoord2=coords[i+1]
         normal=np.array([currCoord2[1]-currCoord1[1],currCoord1[0]-currCoord2[0]])
@@ -75,5 +80,50 @@ for k in range(0,2):
                         outfile.write("%25.15f " % x[i])
                         outfile.write("%25.15f " % y[j])
                         outfile.write("%25.15f\n" % k)
+
+outfile.close()
+
+outfile=open("files/cell_class_00_test.txt","w")
+
+for j in range(0,ny-1):
+        for i in range(0,nx-1):
+                outfile.write(str(i)+" "+str(j)+" "+str(1)+" ")
+                point_cellcentre=Point(0.5*(x[i]+x[i+1]),0.5*(y[j]+y[j+1]))
+                isInside=polygon.contains(point_cellcentre)
+                if(isInside):
+                        cell_type[i,j]=int(-1)
+                else:
+                        cell_type[i,j]=int(0)
+
+                outfile.write(str(cell_type[i,j])+"\n")
+
+outfile.close()
+
+outfile=open("files/ea_x_test.txt","w")
+
+for j in range(0,ny-1):
+        for i in range(0,nx):
+                line=LineString([(x[i],y[j]),(x[i],y[j+1])])
+                intersection_pieces=line.intersection(polygon)
+                intersection_length=intersection_pieces.length
+                if(intersection_length==0.0 and polygon.contains(Point(x[i],y[j]))):
+                        intersection_length=line.length
+                non_intersection_length=line.length-intersection_length
+                outfile.write("%25.15f\n" % non_intersection_length)
+
+outfile.close()
+
+outfile=open("files/ea_y_test.txt","w")
+
+for j in range(0,ny):
+        for i in range(0,nx-1):
+                line=LineString([(x[i],y[j]),(x[i+1],y[j])])
+                intersection_pieces=line.intersection(polygon)
+                intersection_length=intersection_pieces.length
+                if(intersection_length==0.0 and polygon.contains(Point(x[i],y[j]))):
+                        intersection_length=line.length
+                non_intersection_length=line.length-intersection_length
+                outfile.write("%25.15f\n" % non_intersection_length)
+
 
 outfile.close()
